@@ -45,6 +45,20 @@ The **Budgets Page** helps users efficiently create, view, and manage their budg
 
 ---
 
+
+---
+
+## 🚀 Upgrade Plan Page
+The **Upgrade Plan Page** offers different pricing plans to access premium features.
+
+
+   
+![image](https://github.com/user-attachments/assets/2950d02a-c361-4a2c-ba94-41323e351d5e)
+
+
+---
+
+
 ## 🚀 *Installation & Setup*
 To run the project locally, follow these steps:
 
