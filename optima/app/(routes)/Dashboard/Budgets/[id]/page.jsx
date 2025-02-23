@@ -1,13 +1,13 @@
 "use client";
 import { useParams } from "next/navigation";
-import Expenses from "./expenses";
+import CreateBudget from "./CreateBudget";
 
-export default function ExpensesPage() {
+export default function BudgetPage() {
   const { id } = useParams();
 
   return (
     <div>
-      <Expenses id={id} />
+      <CreateBudget id={id} />
     </div>
   );
 }
