@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Import axios for HTTP requests
 import {
   Dialog,
   DialogClose,
@@ -21,14 +22,46 @@ function CreateBudget() {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
 
-  const onCreateBudget = () => {
-    console.log(name, amount, emojiIcon);
-    toast('Budget Created Successfully'); // Show toast after creating the budget
+  // State for storing the list of budgets
+  const [budgets, setBudgets] = useState([]);
+
+  // Function to fetch all budgets from the backend
+  const fetchBudgets = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/api/budgets');
+    setBudgets(response.data); // Set the fetched budgets to the state
+  } catch (error) {
+    console.error('Error fetching budgets:', error);
+  }
+};
+
+
+  // Fetch budgets on page load
+  useEffect(() => {
+    fetchBudgets();
+  }, []);
+
+  // Function to handle budget creation
+  const onCreateBudget = async () => {
+    try {
+      // Send new budget to the backend
+      await axios.post('http://localhost:5000/api/budgets', {
+        name,
+        amount,
+        emoji: emojiIcon,
+      });
+      toast('Budget Created Successfully'); // Show toast after creating the budget
+
+      // Fetch updated budgets after creating the new one
+      fetchBudgets();
+    } catch (error) {
+      console.error('Error creating budget:', error);
+      toast.error('Failed to create budget');
+    }
   };
 
   return (
     <div>
-      {/* Toaster component should be placed somewhere globally */}
       <Toaster />
       
       <Dialog>
@@ -83,6 +116,32 @@ function CreateBudget() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Display the list of budgets */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold">Created Budgets</h2>
+        <div className="mt-5">
+          {budgets.length > 0 ? (
+            <ul className="space-y-4">
+              {budgets.map((budget) => (
+                <li key={budget._id} className="border p-4 rounded-md shadow-md">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-lg font-semibold">{budget.name}</span>
+                      <span className="ml-2 text-sm text-gray-500">{budget.emoji}</span>
+                    </div>
+                    <div>
+                      <span className="text-lg font-medium">{budget.amount} USD</span>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No budgets created yet.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

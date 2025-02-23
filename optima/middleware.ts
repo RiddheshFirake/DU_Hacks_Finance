@@ -1,12 +1,20 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)'])
+// Define your public routes – currently sign-in routes.
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    await auth.protect()
+  const { pathname } = request.nextUrl;
+  
+  // Allow the landing page (exactly '/') to be public.
+  if (pathname === '/' || isPublicRoute(request)) {
+    return NextResponse.next();
   }
-})
+  
+  // For all other routes, protect them.
+  await auth.protect();
+});
 
 export const config = {
   matcher: [
@@ -15,4 +23,4 @@ export const config = {
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],
-}
+};
