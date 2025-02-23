@@ -6,8 +6,8 @@ import {
   SignedIn,
   SignedOut,
   UserButton
-} from '@clerk/nextjs'
-import { Toaster } from "@/components/ui/sonner"
+} from '@clerk/nextjs';
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,15 +28,21 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>
-        <Toaster />
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+          <Toaster />
           {children}
+          
+          {/* Fixed Profile Button */}
+          <SignedIn>
+            <div style={{
+              position: "fixed",
+              top: "10px",
+              right: "10px",
+              zIndex: 1000 // Ensures it stays above other elements
+            }}>
+              <UserButton />
+            </div>
+          </SignedIn>
         </body>
       </html>
     </ClerkProvider>
