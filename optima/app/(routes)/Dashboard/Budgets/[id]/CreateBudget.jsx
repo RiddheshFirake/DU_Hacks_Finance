@@ -15,6 +15,7 @@ import EmojiPicker from 'emoji-picker-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast, Toaster } from 'sonner';
+import Sidebar from '@/app/(routes)/Dashboard/_components/Sidebar';
 
 function CreateBudget() {
   const [emojiIcon, setEmojiIcon] = useState('😄');

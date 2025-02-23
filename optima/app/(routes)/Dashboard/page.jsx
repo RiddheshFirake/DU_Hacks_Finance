@@ -30,9 +30,25 @@ const Button = ({ children, onClick, active }) => (
 );
 
 function Dashboard() {
+  const [budgets, setBudgets] = useState([]);
+  const [totalBudget, setTotalBudget] = useState(0);
+  
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/budgets")
+      .then((response) => {
+        setBudgets(response.data); 
+        
+        // Calculate total budget dynamically
+        const total = response.data.reduce((acc, budget) => acc + budget.amount, 0);
+        setTotalBudget(total);
+      })
+      .catch((error) => {
+        console.error("Error fetching budgets:", error);
+      });
+  }, []);
   const [activeTab, setActiveTab] = useState("Dashboard");
   const router = useRouter();
-  const totalBudget = 15000;
+  // const totalBudget = 15000;
   const totalSpend = 13000;
   const remainingBudget = totalBudget - totalSpend;
 
@@ -63,17 +79,8 @@ function Dashboard() {
     { id: 6, description: "Transport fee", amount: "$700" },
   ];
 
-  const [budgets, setBudgets] = useState([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:5000/api/budgets")
-      .then((response) => {
-        setBudgets(response.data); // Store fetched data
-      })
-      .catch((error) => {
-        console.error("Error fetching budgets:", error);
-      });
-  }, []);
+
 
   return (
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600 font-sans text-white">
@@ -103,10 +110,11 @@ function Dashboard() {
         <p className="text-gray-600 mb-6">Track and manage your finances like a pro.</p>
 
         <div className="grid grid-cols-3 gap-6">
-          <div className="bg-gradient-to-r from-indigo-400 to-purple-500 p-6 rounded-2xl shadow-lg text-white">
-            <h3 className="text-lg font-semibold">Total Budget</h3>
-            <p className="text-3xl font-extrabold">$15000</p>
-          </div>
+        <div className="bg-gradient-to-r from-indigo-400 to-purple-500 p-6 rounded-2xl shadow-lg text-white">
+          <h3 className="text-lg font-semibold">Total Budget</h3>
+          <p className="text-3xl font-extrabold">${totalBudget}</p>
+        </div>
+
 
           <div className="bg-gradient-to-r from-red-400 to-pink-500 p-6 rounded-2xl shadow-lg text-white">
             <h3 className="text-lg font-semibold">Total Spend</h3>
@@ -115,7 +123,7 @@ function Dashboard() {
 
           <div className="bg-gradient-to-r from-green-400 to-emerald-500 p-6 rounded-2xl shadow-lg text-white">
             <h3 className="text-lg font-semibold">Budget Remaining</h3>
-            <p className="text-3xl font-extrabold">$2000</p>
+            <p className="text-3xl font-extrabold">${remainingBudget}</p>
           </div>
         </div>
 
