@@ -11,9 +11,9 @@ export default function Sidebar() {
     { name: "📊 Dashboard", path: "/Dashboard" },
     { name: "💰 Expenses", path: "/Dashboard/Expenses/1" }, // '1' is a placeholder for dynamic ID
     { name: "📅 Budgets", path: "/Dashboard/Budgets/1" },
+    { name: "📢 Advisor", path: "/Dashboard/Advisory" }, // NEW ADVISORY PAGE
     { name: "📑 Upgrade", path: "/Dashboard/upgrade-plan" },
   ];
-  
 
   return (
     <aside className="w-64 bg-indigo-800 text-white p-5 flex flex-col space-y-4 shadow-lg min-h-screen">

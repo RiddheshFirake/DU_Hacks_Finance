@@ -12,8 +12,8 @@ export default function BudgetPage() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-10">
-        <h2 className="text-2xl font-bold mb-4">Budget Details</h2>
+      <div className="flex-1 p-10 bg-gradient-to-br from-purple-500 to-indigo-600">
+        <h2 className="text-2xl font-bold mb-4 text-white">Budget Details</h2>
         <CreateBudget id={id} />
       </div>
     </div>

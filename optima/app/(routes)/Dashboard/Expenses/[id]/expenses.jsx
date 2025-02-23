@@ -1,46 +1,178 @@
-// "use client";
+"use client";
+import React, { useState, useEffect } from "react";
 
-// import Sidebar from "../../_components/Sidebar";
-// import { motion } from "framer-motion";
+export default function Expenses() {
+  const [expenses, setExpenses] = useState([]);
+  const [editExpense, setEditExpense] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: "", amount: "", category: "" });
 
-// export default function Expenses() {
-//   return (
-//     <div className="flex min-h-screen bg-gradient-to-br from-purple-500 to-indigo-600 font-sans text-white">
-//       <Sidebar /> {/* Sidebar Component */}
+  useEffect(() => {
+    fetch("http://localhost:5000/api/expenses")
+      .then((res) => res.json())
+      .then((data) => setExpenses(data))
+      .catch((err) => console.log(err));
+  }, []);
 
-//       {/* Main Content */}
-//       <section className="flex-1 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-500 to-indigo-600 p-10 shadow-2xl">
-//         <motion.h1
-//           initial={{ opacity: 0, y: -20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.8 }}
-//           className="text-5xl font-extrabold text-white mb-6 text-center"
-//         >
-//           💰 Expenses Tracker
-//         </motion.h1>
-//         <p className="text-lg text-gray-300 mb-10 text-center">
-//           Manage your expenses efficiently with real-time tracking and insights.
-//         </p>
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-//         {/* Expenses List (Placeholder) */}
-//         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6">
-//           <h2 className="text-2xl font-bold text-gray-800 mb-4">Recent Expenses</h2>
-//           <ul className="divide-y divide-gray-300">
-//             <li className="flex justify-between py-4">
-//               <span className="text-gray-600">🍕 Food</span>
-//               <span className="font-semibold text-red-500">- $25</span>
-//             </li>
-//             <li className="flex justify-between py-4">
-//               <span className="text-gray-600">🚕 Transport</span>
-//               <span className="font-semibold text-red-500">- $15</span>
-//             </li>
-//             <li className="flex justify-between py-4">
-//               <span className="text-gray-600">🛒 Groceries</span>
-//               <span className="font-semibold text-red-500">- $40</span>
-//             </li>
-//           </ul>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// }
+  const handleAddExpense = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/expenses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Failed to add expense");
+
+      const newExpense = await response.json();
+      setExpenses([...expenses, newExpense]);
+      setFormData({ name: "", amount: "", category: "" });
+    } catch (error) {
+      console.error("Error adding expense:", error);
+    }
+  };
+
+  const handleEdit = (expense) => {
+    setEditExpense(expense._id);
+    setFormData({ name: expense.name, amount: expense.amount, category: expense.category });
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/expenses/${editExpense}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Failed to update expense");
+
+      const updatedExpense = await response.json();
+      setExpenses(expenses.map((exp) => (exp._id === updatedExpense._id ? updatedExpense : exp)));
+      setEditExpense(null);
+      setFormData({ name: "", amount: "", category: "" });
+    } catch (error) {
+      console.error("Error updating expense:", error);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-purple-500 to-purple-700 text-white p-6">
+      <h2 className="text-4xl font-bold mb-6">💰 Expense Tracker</h2>
+
+      <button
+        className="mb-6 bg-white text-purple-700 font-semibold px-5 py-3 rounded-lg shadow-lg hover:bg-gray-200 transition"
+        onClick={() => setShowForm(!showForm)}
+      >
+        {showForm ? "Cancel" : "+ Add Expense"}
+      </button>
+
+      {showForm && (
+        <div className="bg-white text-gray-900 p-6 rounded-lg shadow-lg w-80">
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-lg mb-3 focus:ring focus:ring-purple-400"
+            placeholder="Expense Name"
+          />
+          <input
+            type="number"
+            name="amount"
+            value={formData.amount}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-lg mb-3 focus:ring focus:ring-purple-400"
+            placeholder="Amount"
+          />
+          <input
+            type="text"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-lg mb-3 focus:ring focus:ring-purple-400"
+            placeholder="Category"
+          />
+          <button
+            className="w-full bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            onClick={handleAddExpense}
+          >
+            Add Expense
+          </button>
+        </div>
+      )}
+
+<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+  {expenses.length === 0 ? (
+    <p className="text-lg text-gray-200">No expenses added yet.</p>
+  ) : (
+    expenses.map((expense) => (
+      <div key={expense._id} className="bg-white text-gray-900 p-4 rounded-lg shadow-lg w-full">
+        <p className="font-bold text-lg mb-1">
+          {expense.name} - <span className="text-green-600">${expense.amount}</span>
+        </p>
+        <p className="text-sm text-gray-500">Category: {expense.category || "N/A"}</p>
+        <button
+          className="mt-2 text-blue-600 font-semibold hover:underline"
+          onClick={() => handleEdit(expense)}
+        >
+          Edit
+        </button>
+      </div>
+    ))
+  )}
+</div>
+
+
+      {editExpense && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-6">
+          <div className="bg-white text-gray-900 p-6 rounded-lg shadow-lg w-80">
+            <h3 className="text-xl font-bold mb-4">Edit Expense</h3>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg mb-3 focus:ring focus:ring-purple-400"
+              placeholder="Expense Name"
+            />
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg mb-3 focus:ring focus:ring-purple-400"
+              placeholder="Amount"
+            />
+            <input
+              type="text"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg mb-3 focus:ring focus:ring-purple-400"
+              placeholder="Category"
+            />
+            <div className="flex justify-between">
+              <button
+                className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                onClick={handleUpdate}
+              >
+                Update
+              </button>
+              <button
+                className="bg-red-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                onClick={() => setEditExpense(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

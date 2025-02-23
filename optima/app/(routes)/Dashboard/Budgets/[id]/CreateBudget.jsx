@@ -120,12 +120,12 @@ function CreateBudget() {
 
       {/* Display the list of budgets */}
       <div className="mt-10">
-        <h2 className="text-2xl font-bold">Created Budgets</h2>
+        <h2 className="text-white text-2xl font-bold">Created Budgets</h2>
         <div className="mt-5">
           {budgets.length > 0 ? (
             <ul className="space-y-4">
               {budgets.map((budget) => (
-                <li key={budget._id} className="border p-4 rounded-md shadow-md">
+                <li key={budget._id} className="bg-white border p-4 rounded-md shadow-md">
                   <div className="flex justify-between items-center">
                     <div>
                       <span className="text-lg font-semibold">{budget.name}</span>

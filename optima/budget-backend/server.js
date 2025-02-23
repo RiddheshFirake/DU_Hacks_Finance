@@ -15,6 +15,18 @@ mongoose.connect('mongodb+srv://riddheshfirake:0FM5UIigIo9s0bEv@cluster0.w8u8v.m
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
+
+// =====================
+// EXPENSES MODEL & ROUTES
+// =====================
+const expenseSchema = new mongoose.Schema({
+  name: String,
+  amount: Number,
+  category: String,
+  date: { type: Date, default: Date.now },
+});
+const Expense = mongoose.model('Expense', expenseSchema);
+
 // Budget Schema
 const budgetSchema = new mongoose.Schema({
   name: String,
@@ -53,6 +65,53 @@ app.get('/api/total-budget', async (req, res) => {
     res.status(200).json({ totalBudget: totalBudget.length > 0 ? totalBudget[0].totalAmount : 0 });
   } catch (error) {
     res.status(500).json({ message: 'Error calculating total budget', error });
+  }
+});
+
+// GET endpoint to fetch all expenses
+app.get('/api/expenses', async (req, res) => {
+  try {
+    const expenses = await Expense.find();
+    console.log('Fetched Expenses:', expenses);  // Debugging log
+    res.status(200).json(expenses);
+  } catch (error) {
+    console.error('Error fetching expenses:', error);
+    res.status(500).json({ message: 'Error fetching expenses', error });
+  }
+});
+
+// POST endpoint to add a new expense
+app.post('/api/expenses', async (req, res) => {
+  try {
+    const { name, amount, category } = req.body;
+    const newExpense = new Expense({ name, amount, category });
+    await newExpense.save();
+    res.status(201).json(newExpense);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding expense', error });
+  }
+});
+
+
+// PUT endpoint to update an expense by ID
+app.put('/api/expenses/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, amount, category } = req.body;
+
+    const updatedExpense = await Expense.findByIdAndUpdate(
+      id,
+      { name, amount, category },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedExpense) {
+      return res.status(404).json({ message: 'Expense not found' });
+    }
+
+    res.status(200).json(updatedExpense);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating expense', error });
   }
 });
 
