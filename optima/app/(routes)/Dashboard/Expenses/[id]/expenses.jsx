@@ -8,7 +8,7 @@ export default function Expenses() {
   const [formData, setFormData] = useState({ name: "", amount: "", category: "" });
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/expenses")
+    fetch("https://du-hacks-finance-3.onrender.com/api/expenses")
       .then((res) => res.json())
       .then((data) => setExpenses(data))
       .catch((err) => console.log(err));
@@ -20,7 +20,7 @@ export default function Expenses() {
 
   const handleAddExpense = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/expenses", {
+      const response = await fetch("https://du-hacks-finance-3.onrender.com/api/expenses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -43,7 +43,7 @@ export default function Expenses() {
 
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/expenses/${editExpense}`, {
+      const response = await fetch(`https://du-hacks-finance-3.onrender.com/api/budgets/${editExpense}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
