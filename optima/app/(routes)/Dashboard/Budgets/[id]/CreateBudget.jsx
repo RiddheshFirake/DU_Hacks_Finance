@@ -29,7 +29,7 @@ function CreateBudget() {
   // Function to fetch all budgets from the backend
   const fetchBudgets = async () => {
   try {
-    const response = await axios.get('http://localhost:5000/api/budgets');
+    const response = await axios.get('https://du-hacks-finance-3.onrender.com/api/budgets');
     setBudgets(response.data); // Set the fetched budgets to the state
   } catch (error) {
     console.error('Error fetching budgets:', error);
@@ -46,7 +46,7 @@ function CreateBudget() {
   const onCreateBudget = async () => {
     try {
       // Send new budget to the backend
-      await axios.post('http://localhost:5000/api/budgets', {
+      await axios.post('https://du-hacks-finance-3.onrender.com/api/budgets', {
         name,
         amount,
         emoji: emojiIcon,
