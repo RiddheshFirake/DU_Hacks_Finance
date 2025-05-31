@@ -47,7 +47,7 @@ function Dashboard() {
       .catch((error) => console.error("Error fetching budgets:", error));
 
     // Fetch Expenses
-    axios.get("http://localhost:5000/api/expenses")
+    axios.get("https://du-hacks-finance-3.onrender.com/api/expenses")
       .then((response) => {
         setExpenses(response.data); // Store expenses data
         const total = response.data.reduce((acc, expense) => acc + expense.amount, 0);
