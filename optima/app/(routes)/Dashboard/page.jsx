@@ -37,7 +37,7 @@ function Dashboard() {
   
   useEffect(() => {
     // Fetch Budgets
-    axios.get("http://localhost:5000/api/budgets")
+    axios.get("https://du-hacks-finance-3.onrender.com/api/budgets")
       .then((response) => {
         console.log("Budgets API Response:", response.data);
         setBudgets(response.data); 
