@@ -27,16 +27,43 @@ export default function AdvisoryPage() {
     setError("");
 
     try {
-      const response = await axios.post("/api/gemini", { userInput });
-
+      const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      console.log("GEMINI_API_KEY:", GEMINI_API_KEY);
+      const requestBody = {
+        contents: [
+          {
+            parts: [
+              {
+                text: userInput, 
+              },
+            ],
+          },
+        ],
+      };
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
+        requestBody, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
       const generatedText =
         response.data.candidates?.[0]?.content?.parts?.[0]?.text ||
         "⚠️ No advice available. Please try again.";
-
+  
       setAdvice(formatResponse(generatedText));
+  
     } catch (error) {
-      console.error("Error fetching advice:", error);
-      setError("❌ Failed to get advice. Please try again later.");
+      if (error.response) {
+        console.error("Error fetching advice:", JSON.stringify(error.response.data, null, 2));
+      } else {
+        console.error("Error fetching advice:", error.message);
+      }
+      setError("❌ Failed to get advice. Please check the console for details.");
+  
     } finally {
       setLoading(false);
     }
