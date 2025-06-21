@@ -116,6 +116,41 @@ app.put('/api/expenses/:id', async (req, res) => {
 });
 
 
+// DELETE endpoint to delete a budget by ID
+app.delete('/api/budgets/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedBudget = await Budget.findByIdAndDelete(id);
+
+    if (!deletedBudget) {
+      return res.status(404).json({ message: 'Budget not found' });
+    }
+
+    res.status(200).json({ message: 'Budget deleted successfully', deletedBudget });
+  } catch (error) {
+    console.error('Error deleting budget:', error);
+    res.status(500).json({ message: 'Error deleting budget', error });
+  }
+});
+
+// DELETE endpoint to delete an expense by ID
+app.delete('/api/expenses/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedExpense = await Expense.findByIdAndDelete(id);
+
+    if (!deletedExpense) {
+      return res.status(404).json({ message: 'Expense not found' });
+    }
+
+    res.status(200).json({ message: 'Expense deleted successfully', deletedExpense });
+  } catch (error) {
+    console.error('Error deleting expense:', error);
+    res.status(500).json({ message: 'Error deleting expense', error });
+  }
+});
+
+
 // GET endpoint to fetch all budgets
 app.get('/api/budgets', async (req, res) => {
     try {
