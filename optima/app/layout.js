@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
           {children}
           
           {/* Fixed Profile Button */}
-          <SignedIn>
+          {/* <SignedIn>
             <div style={{
               position: "fixed",
               top: "10px",
@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
             }}>
               <UserButton />
             </div>
-          </SignedIn>
+          </SignedIn> */}
         </body>
       </html>
     </ClerkProvider>
